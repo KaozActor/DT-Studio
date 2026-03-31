@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meu Progresso</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6ed3df">
+
   <style>
     * { text-align: left; }
 
@@ -15,9 +20,7 @@
       display: flex;
     }
 
-    .main {
-      flex: 1;
-    }
+    .main { flex: 1; }
 
     header {
       background: #d6f4f8;
@@ -62,9 +65,7 @@
       gap: 10px;
     }
 
-    .row button {
-      width: auto;
-    }
+    .row button { width: auto; }
 
     button {
       background: #6ed3df;
@@ -74,9 +75,7 @@
       font-weight: bold;
     }
 
-    button:hover {
-      background: #57c2ce;
-    }
+    button:hover { background: #57c2ce; }
 
     .delete-btn {
       background: #ff6b6b;
@@ -100,28 +99,19 @@
     }
 
     .task {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 10px;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 5px;
-        }
-
-    .task span {
-            text-align: left;
-            word-break: break-word;
-        }
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 5px;
+    }
 
     .task span.done {
       text-decoration: line-through;
       opacity: 0.6;
-    }
-
-    .task button {
-      width: auto;
     }
 
     .top-progress {
@@ -138,6 +128,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <div class="main">
@@ -269,6 +260,11 @@ function render() {
 }
 
 render();
+
+// Registrar Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
 </script>
 
 </body>
