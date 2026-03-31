@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Progresso</title>
+  <style>
+    * { text-align: left; }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f8fbfd;
+      color: #333;
+      display: flex;
+    }
+
+    .main {
+      flex: 1;
+    }
+
+    header {
+      background: #d6f4f8;
+      padding: 15px;
+      text-align: center;
+    }
+
+    header input {
+      font-size: 1.5em;
+      font-weight: bold;
+      border: none;
+      background: transparent;
+      text-align: center;
+      width: 100%;
+    }
+
+    .container {
+      padding: 15px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .row button {
+      width: auto;
+    }
+
+    button {
+      background: #6ed3df;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #57c2ce;
+    }
+
+    .delete-btn {
+      background: #ff6b6b;
+      padding: 6px 10px;
+      font-size: 0.8em;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: #eee;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .progress {
+      height: 100%;
+      background: #6ed3df;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .task {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 10px;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+
+    .task span {
+            text-align: left;
+            word-break: break-word;
+        }
+
+    .task span.done {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .task button {
+      width: auto;
+    }
+
+    .top-progress {
+      position: sticky;
+      top: 0;
+      background: #f8fbfd;
+      padding: 10px 15px;
+      z-index: 10;
+    }
+
+    .progress-label {
+      font-size: 0.9em;
+      margin-top: 3px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="main">
+<header>
+  <input id="titleInput" value="Meu Projeto" onchange="updateTitle()">
+</header>
+
+<div class="top-progress">
+  <div class="container">
+    <strong>Progresso Total</strong>
+    <div class="progress-bar">
+      <div id="totalProgress" class="progress"></div>
+    </div>
+    <div id="totalLabel" class="progress-label"></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="card">
+    <input id="moduleName" placeholder="Nome do módulo">
+    <button onclick="addModule()">Adicionar Módulo</button>
+  </div>
+
+  <div id="modules"></div>
+</div>
+</div>
+
+<script>
+let data = JSON.parse(localStorage.getItem('projectData')) || [];
+let title = localStorage.getItem('projectTitle') || 'Meu Projeto';
+document.getElementById('titleInput').value = title;
+
+function save() {
+  localStorage.setItem('projectData', JSON.stringify(data));
+}
+
+function updateTitle() {
+  title = document.getElementById('titleInput').value;
+  localStorage.setItem('projectTitle', title);
+}
+
+function addModule() {
+  const name = document.getElementById('moduleName').value;
+  if (!name) return;
+
+  data.push({ name, tasks: [] });
+  document.getElementById('moduleName').value = '';
+  save();
+  render();
+}
+
+function deleteModule(index) {
+  if (!confirm('Deletar módulo inteiro?')) return;
+  data.splice(index, 1);
+  save();
+  render();
+}
+
+function addTask(moduleIndex) {
+  const taskName = prompt('Nome da tarefa:');
+  if (!taskName) return;
+
+  data[moduleIndex].tasks.push({ name: taskName, done: false });
+  save();
+  render();
+}
+
+function deleteTask(moduleIndex, taskIndex) {
+  data[moduleIndex].tasks.splice(taskIndex, 1);
+  save();
+  render();
+}
+
+function toggleTask(moduleIndex, taskIndex) {
+  data[moduleIndex].tasks[taskIndex].done = !data[moduleIndex].tasks[taskIndex].done;
+  save();
+  render();
+}
+
+function calculateProgress(tasks) {
+  if (tasks.length === 0) return 0;
+  const done = tasks.filter(t => t.done).length;
+  return (done / tasks.length) * 100;
+}
+
+function render() {
+  const container = document.getElementById('modules');
+  container.innerHTML = '';
+
+  let totalTasks = 0;
+  let totalDone = 0;
+
+  data.forEach((mod, i) => {
+    const progress = calculateProgress(mod.tasks);
+
+    totalTasks += mod.tasks.length;
+    totalDone += mod.tasks.filter(t => t.done).length;
+
+    const div = document.createElement('div');
+    div.className = 'card';
+
+    div.innerHTML = `
+      <strong>${mod.name}</strong>
+      <div class="progress-bar">
+        <div class="progress" style="width:${progress}%"></div>
+      </div>
+      <div class="progress-label">${Math.round(progress)}%</div>
+
+      <div class="row">
+        <button onclick="addTask(${i})">Adicionar tarefa</button>
+        <button class="delete-btn" onclick="deleteModule(${i})">Excluir</button>
+      </div>
+
+      ${mod.tasks.map((t, j) => `
+        <div class="task">
+          <input type="checkbox" ${t.done ? 'checked' : ''} onclick="toggleTask(${i}, ${j})">
+          <span class="${t.done ? 'done' : ''}">${t.name}</span>
+          <button class="delete-btn" onclick="deleteTask(${i}, ${j})">X</button>
+        </div>
+      `).join('')}
+    `;
+
+    container.appendChild(div);
+  });
+
+  const totalProgress = totalTasks === 0 ? 0 : (totalDone / totalTasks) * 100;
+  document.getElementById('totalProgress').style.width = totalProgress + '%';
+  document.getElementById('totalLabel').innerText = Math.round(totalProgress) + '%';
+}
+
+render();
+</script>
+
+</body>
+</html>
