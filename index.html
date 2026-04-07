@@ -85,11 +85,11 @@
     }
 
     .progress {
-      height: 100%;
-      background: #6ed3df;
-      width: 0%;
-      transition: width 0.4s ease;
-    }
+  height: 100%;
+  background: #6ed3df;
+  width: 0%;
+  transition: width 0.6s ease;
+}
 
     .task {
       display: grid;
@@ -193,7 +193,17 @@ function addTask(moduleIndex) {
   const taskName = prompt('Nome da tarefa:');
   if (!taskName) return;
 
-  const deadline = prompt('Prazo (YYYY-MM-DD):');
+  const deadlineInput = prompt('Prazo (DD/MM/AAAA) — opcional:');
+
+let deadline = null;
+
+if (deadlineInput) {
+  const parts = deadlineInput.split('/');
+  if (parts.length === 3) {
+    const [day, month, year] = parts;
+    deadline = `${year}-${month}-${day}`;
+  }
+}
 
   data[moduleIndex].tasks.push({ name: taskName, done: false, deadline });
   save();
@@ -225,6 +235,24 @@ function isOverdue(date) {
   return d < today && today.toDateString() !== d.toDateString();
 }
 
+function getRemainingTime(deadline) {
+  if (!deadline) return '';
+
+  const now = new Date();
+  const end = new Date(deadline);
+  const diff = end - now;
+
+  if (diff <= 0) return '<span class="deadline overdue">Atrasado</span>';
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+
+  const [year, month, day] = deadline.split('-');
+  const formatted = `${day}/${month}/${year}`;
+
+  return `<span class="deadline">Prazo: ${formatted} • ${days}d ${hours}h restantes</span>`;
+}
+
 function render() {
   const container = document.getElementById('modules');
   container.innerHTML = '';
@@ -253,16 +281,13 @@ function render() {
         <button class="delete-btn" onclick="deleteModule(${i})">Excluir</button>
       </div>
 
-      ${mod.tasks.map((t, j) => {
-        const overdue = isOverdue(t.deadline);
-        return `
+      ${mod.tasks.map((t, j) => `
         <div class="task">
           <input type="checkbox" ${t.done ? 'checked' : ''} onclick="toggleTask(${i}, ${j})">
-          <span class="${t.done ? 'done' : ''}">${t.name}</span>
+          <span class="${t.done ? 'done' : ''}">${t.name}<br>${getRemainingTime(t.deadline)}</span>
           <button class="delete-btn" onclick="deleteTask(${i}, ${j})">X</button>
-          ${t.deadline ? `<div class="deadline ${overdue ? 'overdue' : ''}">Prazo: ${t.deadline}</div>` : ''}
         </div>
-      `}).join('')}
+      `).join('')}
     `;
 
     container.appendChild(div);
@@ -272,6 +297,9 @@ function render() {
   document.getElementById('totalProgress').style.width = totalProgress + '%';
   document.getElementById('totalLabel').innerText = Math.round(totalProgress) + '%';
 }
+
+// Atualiza contagem automaticamente
+toggleInterval = setInterval(render, 60000);
 
 render();
 </script>
