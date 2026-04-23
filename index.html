@@ -156,7 +156,6 @@ function updateTitle() {
 function addModule() {
   const name = document.getElementById('moduleName').value;
   if (!name) return;
-  // Usamos ID único para rastrear a animação individual de cada barra
   data.push({ id: 'mod_' + Date.now(), name, tasks: [] });
   document.getElementById('moduleName').value = '';
   save();
@@ -204,8 +203,13 @@ function toggleTask(moduleIndex, taskIndex) {
   render();
 }
 
-function getRemainingTime(deadline) {
+// ✅ CORREÇÃO AQUI
+function getRemainingTime(deadline, done) {
   if (!deadline) return '';
+
+  if (done) {
+    return '<br><span class="deadline">Concluído</span>';
+  }
 
   const now = new Date();
   const [year, month, day] = deadline.split('-');
@@ -236,7 +240,6 @@ function render() {
     totalTasks += mod.tasks.length;
     totalDone += doneCount;
 
-    // Recupera onde a barra parou na última vez para animar a partir dali
     const startValue = lastProgress[mod.id] || 0;
 
     const div = document.createElement('div');
@@ -256,14 +259,13 @@ function render() {
       ${mod.tasks.map((t, j) => `
         <div class="task">
           <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${i}, ${j})">
-          <span class="${t.done ? 'done' : ''}">${t.name}${getRemainingTime(t.deadline)}</span>
+          <span class="${t.done ? 'done' : ''}">${t.name}${getRemainingTime(t.deadline, t.done)}</span>
           <button class="delete-btn" onclick="deleteTask(${i}, ${j})">X</button>
         </div>
       `).join('')}
     `;
     container.appendChild(div);
 
-    // Gatilho da animação incremental
     setTimeout(() => {
       const bar = document.getElementById(`bar-${mod.id}`);
       if (bar) bar.style.width = currentProgress + '%';
@@ -271,7 +273,6 @@ function render() {
     }, 10);
   });
 
-  // Atualização da Barra Total
   const totalPct = totalTasks === 0 ? 0 : (totalDone / totalTasks) * 100;
   setTimeout(() => {
     const totalBar = document.getElementById('totalProgress');
@@ -280,9 +281,7 @@ function render() {
   }, 10);
 }
 
-// Atualiza os cronômetros de prazo a cada minuto
 setInterval(render, 60000);
-
 render();
 </script>
 
