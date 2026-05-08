@@ -4,285 +4,831 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meu Progresso</title>
+
   <style>
-    * { text-align: left; box-sizing: border-box; }
-    body { 
-      font-family: Arial, sans-serif; 
-      margin: 0; 
-      background: #f8fbfd; 
-      color: #333; 
-    }
-    header { 
-      background: #d6f4f8; 
-      padding: 15px; 
-      text-align: center; 
-    }
-    header input { 
-      font-size: 1.5em; 
-      font-weight: bold; 
-      border: none; 
-      background: transparent; 
-      text-align: center; 
-      width: 100%; 
-    }
-    .container { 
-      padding: 15px; 
-      max-width: 800px; 
-      margin: auto; 
-    }
-    .card { 
-      background: white; 
-      border-radius: 12px; 
-      padding: 15px; 
-      margin-bottom: 15px; 
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
-    }
-    input, button { 
-      padding: 10px; 
-      border-radius: 8px; 
-      border: 1px solid #ccc; 
-      margin: 5px 0; 
-      width: 100%; 
-    }
-    .row { 
-      display: flex; 
-      gap: 10px; 
-    }
-    .row button { width: auto; }
-    button { 
-      background: #6ed3df; 
-      border: none; 
-      color: white; 
-      cursor: pointer; 
-      font-weight: bold; 
-    }
-    button:hover { background: #57c2ce; }
-    .delete-btn { 
-      background: #ff6b6b; 
-      padding: 6px 10px; 
-      font-size: 0.8em; 
-    }
-    
-    .progress-bar { 
-      height: 12px; 
-      background: #eee; 
-      border-radius: 10px; 
-      overflow: hidden; 
-      margin-top: 5px; 
-    }
-    
-    .progress { 
-      height: 100%; 
-      background: #6ed3df; 
-      width: 0%; 
-      transition: width 0.6s ease; 
+    * {
+      text-align: left;
+      box-sizing: border-box;
     }
 
-    .task { 
-      display: grid; 
-      grid-template-columns: auto 1fr auto; 
-      align-items: center; 
-      gap: 10px; 
-      background: #f9f9f9; 
-      padding: 10px; 
-      border-radius: 8px; 
-      margin-top: 5px; 
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f8fbfd;
+      color: #333;
     }
-    .task span.done { 
-      text-decoration: line-through; 
-      opacity: 0.6; 
+
+    header {
+      background: #d6f4f8;
+      padding: 15px;
+      text-align: center;
     }
-    .deadline { 
-      font-size: 0.8em; 
-      color: #666; 
-      grid-column: 2 / 4; 
+
+    header input {
+      font-size: 1.5em;
+      font-weight: bold;
+      border: none;
+      background: transparent;
+      text-align: center;
+      width: 100%;
     }
-    .deadline.overdue { 
-      color: red; 
-      font-weight: bold; 
+
+    .container {
+      padding: 15px;
+      max-width: 800px;
+      margin: auto;
     }
-    .top-progress { 
-      position: sticky; 
-      top: 0; 
-      background: #f8fbfd; 
-      padding: 10px 15px; 
-      z-index: 10; 
-      border-bottom: 1px solid #e0eef1; 
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-    .progress-label { 
-      font-size: 0.9em; 
-      margin-top: 3px; 
+
+    input,
+    button,
+    select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin: 5px 0;
+      width: 100%;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row button {
+      width: auto;
+      flex: 1;
+    }
+
+    button {
+      background: #6ed3df;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #57c2ce;
+    }
+
+    .delete-btn {
+      background: #ff6b6b;
+      padding: 6px 10px;
+      font-size: 0.8em;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: #eee;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .progress {
+      height: 100%;
+      background: #6ed3df;
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+
+    .task {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 5px;
+    }
+
+    .task span.done {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .deadline {
+      font-size: 0.8em;
+      color: #666;
+      grid-column: 2 / 4;
+    }
+
+    .deadline.overdue {
+      color: red;
+      font-weight: bold;
+    }
+
+    .top-progress {
+      position: sticky;
+      top: 0;
+      background: #f8fbfd;
+      padding: 10px 15px;
+      z-index: 10;
+      border-bottom: 1px solid #e0eef1;
+    }
+
+    .progress-label {
+      font-size: 0.9em;
+      margin-top: 3px;
     }
   </style>
 </head>
+
 <body>
 
 <header>
   <input id="titleInput" value="Meu Projeto" onchange="updateTitle()">
 </header>
 
+<!-- SISTEMA DE PROJETOS -->
+<div class="container">
+  <div class="card">
+
+    <strong>Projetos</strong>
+
+    <select id="projectSelect" onchange="switchProject()"></select>
+
+    <div class="row">
+
+      <button onclick="newProject()">
+        Novo Projeto
+      </button>
+
+      <button onclick="exportProject()">
+        Exportar
+      </button>
+
+      <button onclick="document.getElementById('importFile').click()">
+        Importar
+      </button>
+
+      <button
+        onclick="deleteProject()"
+        class="delete-btn"
+      >
+        Apagar Projeto
+      </button>
+
+    </div>
+
+    <input
+      type="file"
+      id="importFile"
+      accept=".json"
+      style="display:none"
+      onchange="importProject(event)"
+    >
+
+  </div>
+</div>
+
 <div class="top-progress">
   <div class="container">
+
     <strong>Progresso Total</strong>
+
     <div class="progress-bar">
       <div id="totalProgress" class="progress"></div>
     </div>
-    <div id="totalLabel" class="progress-label">0%</div>
+
+    <div id="totalLabel" class="progress-label">
+      0%
+    </div>
+
   </div>
 </div>
 
 <div class="container">
+
   <div class="card">
-    <input id="moduleName" placeholder="Nome do módulo">
-    <button onclick="addModule()">Adicionar Módulo</button>
+
+    <input
+      id="moduleName"
+      placeholder="Nome do módulo"
+    >
+
+    <button onclick="addModule()">
+      Adicionar Módulo
+    </button>
+
   </div>
+
   <div id="modules-container"></div>
+
 </div>
 
 <script>
+
 let lastProgress = {};
-let data = JSON.parse(localStorage.getItem('projectData')) || [];
-let title = localStorage.getItem('projectTitle') || 'Meu Projeto';
-document.getElementById('titleInput').value = title;
 
-function save() { 
-  localStorage.setItem('projectData', JSON.stringify(data)); 
+// =============================
+// SISTEMA DE PROJETOS
+// =============================
+
+let projects =
+  JSON.parse(localStorage.getItem('projects')) || {};
+
+let currentProject =
+  localStorage.getItem('currentProject') || null;
+
+if (!currentProject) {
+
+  currentProject = 'Meu Projeto';
+
+  projects[currentProject] = [];
+
 }
 
-function updateTitle() { 
-  localStorage.setItem('projectTitle', document.getElementById('titleInput').value); 
+let data = projects[currentProject];
+
+document.getElementById('titleInput').value =
+  currentProject;
+
+// =============================
+// SAVE
+// =============================
+
+function save() {
+
+  projects[currentProject] = data;
+
+  localStorage.setItem(
+    'projects',
+    JSON.stringify(projects)
+  );
+
+  localStorage.setItem(
+    'currentProject',
+    currentProject
+  );
 }
+
+// =============================
+// TÍTULO
+// =============================
+
+function updateTitle() {
+
+  const newTitle =
+    document.getElementById('titleInput').value;
+
+  if (!newTitle) return;
+
+  if (newTitle === currentProject) return;
+
+  projects[newTitle] = projects[currentProject];
+
+  delete projects[currentProject];
+
+  currentProject = newTitle;
+
+  data = projects[currentProject];
+
+  save();
+
+  renderProjects();
+}
+
+// =============================
+// RENDER DOS PROJETOS
+// =============================
+
+function renderProjects() {
+
+  const select =
+    document.getElementById('projectSelect');
+
+  select.innerHTML = '';
+
+  Object.keys(projects).forEach(name => {
+
+    const option =
+      document.createElement('option');
+
+    option.value = name;
+
+    option.textContent = name;
+
+    if (name === currentProject) {
+      option.selected = true;
+    }
+
+    select.appendChild(option);
+
+  });
+}
+
+// =============================
+// TROCAR PROJETO
+// =============================
+
+function switchProject() {
+
+  currentProject =
+    document.getElementById('projectSelect').value;
+
+  data = projects[currentProject];
+
+  document.getElementById('titleInput').value =
+    currentProject;
+
+  save();
+
+  render();
+}
+
+// =============================
+// NOVO PROJETO
+// =============================
+
+function newProject() {
+
+  const name =
+    prompt('Nome do projeto:');
+
+  if (!name) return;
+
+  if (projects[name]) {
+
+    alert('Já existe um projeto.');
+
+    return;
+  }
+
+  projects[name] = [];
+
+  currentProject = name;
+
+  data = projects[currentProject];
+
+  save();
+
+  renderProjects();
+
+  render();
+
+}
+
+// =============================
+// APAGAR PROJETO
+// =============================
+
+function deleteProject() {
+
+  const names = Object.keys(projects);
+
+  // impede apagar o último projeto
+  if (names.length <= 1) {
+
+    alert('Você precisa ter pelo menos um projeto.');
+
+    return;
+  }
+
+  const confirmDelete = confirm(
+    `Apagar o projeto "${currentProject}"?`
+  );
+
+  if (!confirmDelete) return;
+
+  delete projects[currentProject];
+
+  // seleciona automaticamente outro projeto
+  currentProject = Object.keys(projects)[0];
+
+  data = projects[currentProject];
+
+  save();
+
+  renderProjects();
+
+  render();
+
+  document.getElementById('titleInput').value =
+    currentProject;
+}
+
+// =============================
+// EXPORTAR
+// =============================
+
+function exportProject() {
+
+  const exportData = {
+
+    name: currentProject,
+
+    data: data
+
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(exportData, null, 2)],
+    {
+      type: 'application/json'
+    }
+  );
+
+  const url =
+    URL.createObjectURL(blob);
+
+  const a =
+    document.createElement('a');
+
+  a.href = url;
+
+  a.download =
+    currentProject + '.json';
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+// =============================
+// IMPORTAR
+// =============================
+
+function importProject(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+
+    try {
+
+      const imported =
+        JSON.parse(e.target.result);
+
+      if (
+        !imported.name ||
+        !imported.data
+      ) {
+
+        alert('Arquivo inválido');
+
+        return;
+      }
+
+      projects[imported.name] =
+        imported.data;
+
+      currentProject =
+        imported.name;
+
+      data =
+        projects[currentProject];
+
+      save();
+
+      renderProjects();
+
+      render();
+
+    } catch {
+
+      alert('Erro ao importar.');
+
+    }
+
+  };
+
+  reader.readAsText(file);
+}
+
+// =============================
+// MÓDULOS
+// =============================
 
 function addModule() {
-  const name = document.getElementById('moduleName').value;
+
+  const name =
+    document.getElementById('moduleName').value;
+
   if (!name) return;
-  data.push({ id: 'mod_' + Date.now(), name, tasks: [] });
+
+  data.push({
+
+    id: 'mod_' + Date.now(),
+
+    name,
+
+    tasks: []
+
+  });
+
   document.getElementById('moduleName').value = '';
+
   save();
+
   render();
 }
 
 function deleteModule(index) {
-  if (!confirm('Deletar módulo inteiro?')) return;
+
+  if (!confirm('Deletar módulo inteiro?'))
+    return;
+
   const modId = data[index].id;
+
   delete lastProgress[modId];
+
   data.splice(index, 1);
+
   save();
+
   render();
 }
 
+// =============================
+// TAREFAS
+// =============================
+
 function addTask(moduleIndex) {
-  const taskName = prompt('Nome da tarefa:');
+
+  const taskName =
+    prompt('Nome da tarefa:');
+
   if (!taskName) return;
 
-  const deadlineInput = prompt('Prazo (DD/MM/AAAA) — opcional:');
+  const deadlineInput =
+    prompt('Prazo (DD/MM/AAAA) — opcional:');
+
   let deadline = null;
 
   if (deadlineInput) {
-    const parts = deadlineInput.split('/');
+
+    const parts =
+      deadlineInput.split('/');
+
     if (parts.length === 3) {
+
       const [day, month, year] = parts;
-      deadline = `${year}-${month}-${day}`;
+
+      deadline =
+        `${year}-${month}-${day}`;
+
     }
   }
 
-  data[moduleIndex].tasks.push({ name: taskName, done: false, deadline });
+  data[moduleIndex].tasks.push({
+
+    name: taskName,
+
+    done: false,
+
+    deadline
+
+  });
+
   save();
+
   render();
 }
 
 function deleteTask(moduleIndex, taskIndex) {
+
   data[moduleIndex].tasks.splice(taskIndex, 1);
+
   save();
+
   render();
 }
 
 function toggleTask(moduleIndex, taskIndex) {
-  data[moduleIndex].tasks[taskIndex].done = !data[moduleIndex].tasks[taskIndex].done;
+
+  data[moduleIndex].tasks[taskIndex].done =
+    !data[moduleIndex].tasks[taskIndex].done;
+
   save();
+
   render();
 }
 
-// ✅ CORREÇÃO AQUI
+// =============================
+// PRAZO
+// =============================
+
 function getRemainingTime(deadline, done) {
+
   if (!deadline) return '';
 
   if (done) {
-    return '<br><span class="deadline">Concluído</span>';
+
+    return `
+      <br>
+      <span class="deadline">
+        Concluído
+      </span>
+    `;
   }
 
   const now = new Date();
-  const [year, month, day] = deadline.split('-');
-  const end = new Date(year, month - 1, day, 23, 59, 59);
+
+  const [year, month, day] =
+    deadline.split('-');
+
+  const end =
+    new Date(year, month - 1, day, 23, 59, 59);
+
   const diff = end - now;
 
-  if (diff <= 0) return '<br><span class="deadline overdue">Atrasado</span>';
+  if (diff <= 0) {
 
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    return `
+      <br>
+      <span class="deadline overdue">
+        Atrasado
+      </span>
+    `;
+  }
 
-  const formatted = `${day}/${month}/${year}`;
-  return `<br><span class="deadline">Prazo: ${formatted} • ${days}d ${hours}h ${minutes}min restantes</span>`;
+  const days =
+    Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  const hours =
+    Math.floor((diff / (1000 * 60 * 60)) % 24);
+
+  const minutes =
+    Math.floor((diff / (1000 * 60)) % 60);
+
+  const formatted =
+    `${day}/${month}/${year}`;
+
+  return `
+    <br>
+    <span class="deadline">
+      Prazo: ${formatted}
+      •
+      ${days}d ${hours}h ${minutes}min restantes
+    </span>
+  `;
 }
 
+// =============================
+// RENDER
+// =============================
+
 function render() {
-  const container = document.getElementById('modules-container');
+
+  const container =
+    document.getElementById('modules-container');
+
   container.innerHTML = '';
 
   let totalTasks = 0;
+
   let totalDone = 0;
 
   data.forEach((mod, i) => {
-    const doneCount = mod.tasks.filter(t => t.done).length;
-    const currentProgress = mod.tasks.length === 0 ? 0 : (doneCount / mod.tasks.length) * 100;
-    
+
+    const doneCount =
+      mod.tasks.filter(t => t.done).length;
+
+    const currentProgress =
+      mod.tasks.length === 0
+      ? 0
+      : (doneCount / mod.tasks.length) * 100;
+
     totalTasks += mod.tasks.length;
+
     totalDone += doneCount;
 
-    const startValue = lastProgress[mod.id] || 0;
+    const startValue =
+      lastProgress[mod.id] || 0;
 
-    const div = document.createElement('div');
+    const div =
+      document.createElement('div');
+
     div.className = 'card';
+
     div.innerHTML = `
+
       <strong>${mod.name}</strong>
+
       <div class="progress-bar">
-        <div id="bar-${mod.id}" class="progress" style="width: ${startValue}%"></div>
+        <div
+          id="bar-${mod.id}"
+          class="progress"
+          style="width:${startValue}%"
+        ></div>
       </div>
-      <div class="progress-label">${Math.round(currentProgress)}%</div>
+
+      <div class="progress-label">
+        ${Math.round(currentProgress)}%
+      </div>
 
       <div class="row">
-        <button onclick="addTask(${i})">Adicionar tarefa</button>
-        <button class="delete-btn" onclick="deleteModule(${i})">Excluir</button>
+
+        <button onclick="addTask(${i})">
+          Adicionar tarefa
+        </button>
+
+        <button
+          class="delete-btn"
+          onclick="deleteModule(${i})"
+        >
+          Excluir
+        </button>
+
       </div>
 
       ${mod.tasks.map((t, j) => `
+
         <div class="task">
-          <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${i}, ${j})">
-          <span class="${t.done ? 'done' : ''}">${t.name}${getRemainingTime(t.deadline, t.done)}</span>
-          <button class="delete-btn" onclick="deleteTask(${i}, ${j})">X</button>
+
+          <input
+            type="checkbox"
+            ${t.done ? 'checked' : ''}
+            onchange="toggleTask(${i}, ${j})"
+          >
+
+          <span class="${t.done ? 'done' : ''}">
+            ${t.name}
+            ${getRemainingTime(t.deadline, t.done)}
+          </span>
+
+          <button
+            class="delete-btn"
+            onclick="deleteTask(${i}, ${j})"
+          >
+            X
+          </button>
+
         </div>
+
       `).join('')}
+
     `;
+
     container.appendChild(div);
 
     setTimeout(() => {
-      const bar = document.getElementById(`bar-${mod.id}`);
-      if (bar) bar.style.width = currentProgress + '%';
-      lastProgress[mod.id] = currentProgress; 
+
+      const bar =
+        document.getElementById(`bar-${mod.id}`);
+
+      if (bar) {
+
+        bar.style.width =
+          currentProgress + '%';
+
+      }
+
+      lastProgress[mod.id] =
+        currentProgress;
+
     }, 10);
+
   });
 
-  const totalPct = totalTasks === 0 ? 0 : (totalDone / totalTasks) * 100;
+  const totalPct =
+    totalTasks === 0
+    ? 0
+    : (totalDone / totalTasks) * 100;
+
   setTimeout(() => {
-    const totalBar = document.getElementById('totalProgress');
-    if (totalBar) totalBar.style.width = totalPct + '%';
-    document.getElementById('totalLabel').innerText = Math.round(totalPct) + '%';
+
+    const totalBar =
+      document.getElementById('totalProgress');
+
+    if (totalBar) {
+
+      totalBar.style.width =
+        totalPct + '%';
+
+    }
+
+    document.getElementById('totalLabel').innerText =
+      Math.round(totalPct) + '%';
+
   }, 10);
 }
 
+// =============================
+// INICIALIZAÇÃO
+// =============================
+
 setInterval(render, 60000);
+
+renderProjects();
+
 render();
+
 </script>
 
 </body>
